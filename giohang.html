@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ Hàng - Thế Giới Di Động</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #fdd835;
+        }
+
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        #cart-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: auto;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .price,
+        .item-total {
+            font-weight: bold;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-controls button {
+            background-color: #fdd835;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .quantity-controls input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            background-color: #121212;
+            color: #fdd835;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+
+        .remove {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .remove:hover {
+            background-color: #ff1a1a;
+        }
+
+        #cart-total {
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #fdd835;
+        }
+
+        .empty-cart {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .empty-cart a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #fdd835;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .empty-cart a:hover {
+            background-color: #ffe657;
+        }
+
+        .thanhToan-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #thanhToan {
+            padding: 10px 20px;
+            background-color: #ffbb1d;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #thanhToan:hover {
+            background-color: #f76b33;
+        }
+
+        .apMa {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            z-index: 10;
+        }
+
+        .apMa h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .apMaGiamGia {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .apMaGiamGia button {
+            padding: 10px;
+            background-color: #f8a520;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .apMaGiamGia button:hover {
+            background-color: #e3540d;
+        }
+
+        .popupsaukhigiam {
+            padding: 10px;
+            background-color: #e6ffe6;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            color: #155724;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9;
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="./image_TGDD/headerimg.png" alt="">
+    </header>
+    <nav>
+        <div class="container">
+            <ul id="down-header">
+                <li id="tgdd"><a href="./index.html"><img src="./image_TGDD/Screenshot 2025-02-09 214638.png"
+                            alt=""></a></li>
+                <li><a href="#">Thanh Hóa<i class='bx bx-caret-down'></i></a></li>
+                <li><input type="text" placeholder=" Tìm Kiếm..."><i class='bx bx-search-alt-2'></i></li>
+                <li><a href="./giohang.html"><button><i class='bx bxs-shopping-bag'></i>Giỏ Hàng<span
+                                id="countSp"></span></button></a></li>
+                <li><a href="">Lịch Sử <br>Đơn Hàng <i class='bx bx-history'></i></a></li>
+                <li><a href=""><span class="btn-content"><span class="btn-top"></span></span>Mua Thẻ Nạp Ngay !</a>
+                </li>
+                <li><a href="">24h Công Nghệ</a></li>
+                <li><a href="">Hỏi Đáp</a></li>
+                <li><a href="">Game App</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Giỏ Hàng Của Bạn</h1>
+        <ul id="cart-list"></ul>
+        <div id="cart-total">Tổng tiền: 0đ</div>
+        <div class="empty-cart" style="display: none;">
+            <p>Giỏ hàng của bạn đang trống.</p>
+            <a href="index.html">Tiếp tục mua sắm</a>
+        </div>
+    </div>
+
+    <div class="thanhToan-container">
+        <button id="thanhToan">Thanh toán</button>
+    </div>
+
+    <div class="overlay"></div>
+
+    <form action="" class="apMa" id="apMa">
+        <h3>Áp mã giảm giá !</h3>
+        <div class="apMaGiamGia">
+            <button id="chonMa" type="button">Chọn mã</button>
+            <div class="popupsaukhigiam"></div>
+            <button id="xacNhanMa" type="button">Xác nhận</button>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function getCart() {
+                const cart = localStorage.getItem('cart');
+                return cart ? JSON.parse(cart) : [];
+            }
+
+            function saveCart(cart) {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+
+            function formatPrice(price) {
+                return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            }
+
+            function updateCartCount() {
+                const cart = getCart();
+                const countSpElement = document.getElementById('countSp');
+                const totalQty = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+                countSpElement.textContent = totalQty > 0 ? totalQty : '';
+            }
+
+            function removeItem(index) {
+                const cart = getCart();
+                cart.splice(index, 1);
+                saveCart(cart);
+                renderCart();
+            }
+
+            function changeQuantity(index, amount) {
+                const cart = getCart();
+                cart[index].quantity = Math.max(1, (cart[index].quantity || 1) + amount);
+                saveCart(cart);
+                renderCart();
+            }
+            let total = 0;
+            let daGiamGia = false;
+            let soTienSauGiam = 0;
+
+            function renderCart() {
+                const cart = getCart();
+                const cartList = document.getElementById('cart-list');
+                const cartTotal = document.getElementById('cart-total');
+                const emptyMessage = document.querySelector('.empty-cart');
+
+                cartList.innerHTML = '';
+                total = 0;
+
+                if (cart.length === 0) {
+                    emptyMessage.style.display = 'block';
+                    cartTotal.textContent = 'Tổng tiền: 0đ';
+                    return;
+                } else {
+                    emptyMessage.style.display = 'none';
+                }
+
+                cart.forEach((item, index) => {
+                    const quantity = item.quantity || 1;
+                    const priceNumber = parseFloat(item.price.replace(/[^\d]/g, ''));
+                    const itemTotal = quantity * priceNumber;
+                    total += itemTotal;
+
+                    const li = document.createElement('li');
+                    li.className = 'cart-item';
+                    li.innerHTML = `
+                        <div class="item-info">
+                            <img src="${item.image || './image_TGDD/default.png'}" alt="${item.name}" width="80">
+                            <strong>${item.name}</strong>
+                        </div>
+                        <div class="item-details">
+                            <span class="price">${item.price}</span>
+                            <div class="quantity-controls">
+                                <button onclick="changeQuantity(${index}, -1)">-</button>
+                                <input type="number" value="${quantity}" min="1" onchange="changeQuantity(${index}, this.value - ${quantity})">
+                                <button onclick="changeQuantity(${index}, 1)">+</button>
+                            </div>
+                            <span class="item-total">${formatPrice(itemTotal)}</span>
+                            <button class="remove" onclick="removeItem(${index})">Xóa</button>
+                        </div>
+                    `;
+                    cartList.appendChild(li);
+                });
+
+
+                cartTotal.textContent = `Tổng tiền: ${daGiamGia ? formatPrice(soTienSauGiam) : formatPrice(total)}`;
+                updateCartCount();
+            }
+
+            renderCart();
+
+            const apMa = document.getElementById("apMa");
+            const sauGiamElement = document.querySelector(".popupsaukhigiam");
+            const maGiamGiaButton = document.getElementById("chonMa");
+            const xacNhanMaButton = document.getElementById("xacNhanMa");
+            const thanhToanButton = document.getElementById("thanhToan");
+            const overlay = document.querySelector(".overlay");
+            const apMaGiamGiaDiv = document.querySelector(".apMaGiamGia");
+
+            thanhToanButton.addEventListener("click", function () {
+                apMa.style.display = "block";
+                overlay.style.display = "block";
+                apMaGiamGiaDiv.style.display = "flex";
+            });
+
+            overlay.addEventListener("click", function () {
+                apMa.style.display = "none";
+                overlay.style.display = "none";
+            });
+
+            maGiamGiaButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                alert("Bạn có 1 mã giảm giá 5% tối đa 200.000, sử dụng nó");
+
+                let mucGiam = total * 0.05;
+                soTienSauGiam = mucGiam < 200000 ? total - mucGiam : total - 200000;
+
+                sauGiamElement.innerHTML = `Bạn sẽ thanh toán ${formatPrice(soTienSauGiam)}`;
+                sauGiamElement.style.display = 'block';
+            });
+
+            xacNhanMaButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                if (soTienSauGiam > 0) {
+                    daGiamGia = true;
+                    renderCart();
+                    alert("Cảm ơn đã mua hàng");
+                    apMa.style.display = "none";
+                    overlay.style.display = "none";
+                } else {
+                    alert("Vui lòng chọn mã giảm giá trước!");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
